@@ -49,14 +49,14 @@
   </style>
 </head>
 <body>
-  <h1>Pronóstico de Carmen</h1>
+  <h1>Pronóstico de la semana</h1>
   <div id="pronostico-tiempo" class="contenedor-pronostico"></div>
 
   <script>
     async function obtenerPronostico() {
       const apiKey = "79YjAEnfaJB2Y2l4vGBv06KxTn893bU5";
       const ciudad = "carmen";
-      const apiUrl = `https://dataservice.accuweather.com/forecasts/v1/daily/5day/1068637?apikey=${apiKey}&q=${ciudad}`;
+      const apiUrl = `https://dataservice.accuweather.com/forecasts/v1/daily/5day/1068637?apikey=${apiKey}&q=${ciudad}&language=es`;
 
       try {
         const respuesta = await fetch(apiUrl);
