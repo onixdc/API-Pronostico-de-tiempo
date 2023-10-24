@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pronóstico del Tiempo</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .contenedor-pronostico {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .dia-pronostico {
+      border: 2px solid #5c5c5c;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .dia-pronostico h2 {
+      margin-bottom: 10px;
+      color: #1e90ff;
+    }
+
+    .temperatura {
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    img.icono-clima {
+      max-width: 50px;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pronóstico de Carmen</h1>
+  <div id="pronostico-tiempo" class="contenedor-pronostico"></div>
+
+  <script>
+    async function obtenerPronostico() {
+      const apiKey = "79YjAEnfaJB2Y2l4vGBv06KxTn893bU5";
+      const ciudad = "carmen";
+      const apiUrl = `https://dataservice.accuweather.com/forecasts/v1/daily/5day/1068637?apikey=${apiKey}&q=${ciudad}`;
+
+      try {
+        const respuesta = await fetch(apiUrl);
+        const datos = await respuesta.json();
+        mostrarPronostico(datos.DailyForecasts);
+      } catch (error) {
+        console.error("Error al obtener los datos:", error);
+      }
+    }
+
+    function fahrenheitACelsius(fahrenheit) {
+      return (((fahrenheit - 32) * 5) / 9).toFixed(2);
+    }
+
+    function mostrarPronostico(pronostico) {
+      const contenedorPronostico = document.getElementById("pronostico-tiempo");
+      contenedorPronostico.innerHTML = "";
+
+      pronostico.forEach((dia) => {
+        const fecha = new Date(dia.Date);
+        const nombreDia = fecha.toLocaleDateString("es-ES", { weekday: "long" });
+        const tempMinCelsius = fahrenheitACelsius(dia.Temperature.Minimum.Value);
+        const tempMaxCelsius = fahrenheitACelsius(dia.Temperature.Maximum.Value);
+        const iconoClima = dia.Day.Icon;
+        const textoClima = dia.Day.IconPhrase;
+
+        const itemPronostico = document.createElement("div");
+        itemPronostico.classList.add("dia-pronostico");
+        itemPronostico.innerHTML = `
+          <h2>${nombreDia}</h2>
+          <p class="temperatura">Temperatura Mínima: ${tempMinCelsius}&deg;C</p>
+          <p class="temperatura">Temperatura Máxima: ${tempMaxCelsius}&deg;C</p>
+          <p>${textoClima}</p>
+          <img src="https://developer.accuweather.com/sites/default/files/${
+            iconoClima < 10 ? "0" + iconoClima : iconoClima
+          }-s.png" alt="Icono Clima" class="icono-clima">
+        `;
+
+        contenedorPronostico.appendChild(itemPronostico);
+      });
+    }
+
+    obtenerPronostico();
+  </script>
+</body>
+</html>
